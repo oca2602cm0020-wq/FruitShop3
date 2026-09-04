@@ -1,4 +1,16 @@
 Rails.application.routes.draw do
+  get "mypage/show"
+  # ユーザ認証
+  devise_for :users
+
+  # マイページ
+  resources :mypage, only: [:show]
+
+  # 商品登録
+  resources :products
+
+  devise_for :users
+  
   # 商品登録
   #get 'products/new'
   #post 'products', to: 'products#create'  # 登録
