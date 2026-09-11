@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "orders/new"
   get "mypage/show"
   # ユーザ認証
   devise_for :users
@@ -9,8 +10,6 @@ Rails.application.routes.draw do
   # 商品登録
   resources :products
 
-  devise_for :users
-  
   # 商品登録
   #get 'products/new'
   #post 'products', to: 'products#create'  # 登録
@@ -29,8 +28,18 @@ Rails.application.routes.draw do
   #delete 'products/:id', to: 'products#destroy', as: 'destroy_product'
 
   # 商品関係
-  resources :products
 
+  # 注文関係
+  resources :orders, only: [:index, :new, :create] do
+    collection do
+      post :confirm  # 注文確認
+    end
+
+    member do
+      get :complete  # 注文完了
+    end
+  end
+  
   # トップページ
   root to: "homes#top"
 
