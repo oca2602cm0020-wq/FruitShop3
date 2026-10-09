@@ -8,8 +8,14 @@ Bundler.require(*Rails.groups)
 
 module FruitShop3
   class Application < Rails::Application
+    config.i18n.default_locale = :ja
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
+
+    # タイムゾーン指定
+    config.time_zone = 'Tokyo'
+    # 日本語化
+    config.i18n.default_locale = :ja
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.

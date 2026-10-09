@@ -67,3 +67,11 @@ end
 
 # Devise
 gem "devise"
+
+# Enum
+gem 'enum_help'
+
+gem 'devise-i18n'
+
+# Ransack
+gem 'ransack'

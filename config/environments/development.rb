@@ -77,4 +77,7 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   config.action_controller.forgery_protection_origin_check = false
+
+  # MiniMagick
+  Rails.application.config.active_storage.variant_processor = :mini_magick
 end

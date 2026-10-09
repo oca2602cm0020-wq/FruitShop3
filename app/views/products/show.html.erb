@@ -1,19 +1,24 @@
 <h1>商品詳細</h1>
 
 <div>
+  <% if @product.photo.attached? %>
+    <%= image_tag @product.thumbnail %>
+  <% end %>
+
   <p>商品名: <%= @product.name %></p>
   <p>説明: <%= @product.description %></p>
   <p>価格: <%= @product.price %>円</p>
+  <p>販売状況: <%= I18n.t("enums.product.status.#{@product.status}") %></p>
 </div>
 
 <% if current_user.admin_flg == true %>
   <%= link_to "編集", edit_product_path(@product) %>
 
-   <br>
+  <br>
 
   <%= link_to '削除', product_path(@product.id),  data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' } %>
 
-<% else %>
-  <%= link_to '注文する', new_order_path(product_id:@product.id) %>
-  
+<% elsif @product.status == 'on_sale' %>
+  <%= link_to '買い物かごに入れる', cart_items_path(product_id: @product.id), data: { turbo_method: :post } %>
+
 <% end %>
