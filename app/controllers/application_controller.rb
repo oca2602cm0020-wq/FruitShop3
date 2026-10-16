@@ -1,10 +1,14 @@
 class ApplicationController < ActionController::Base
   include PriceCalculations
-    # 各アクションの前に実行される。
-    # 商品詳細ページ（products#show）を見た場合のみ、セッションに商品IDを記録する
-      before_action :store_recent_product
+  # 各アクションの前に実行される。
+  # 商品詳細ページ（products#show）を見た場合のみ、セッションに商品IDを記録する
+  before_action :store_recent_product
+
   # Deviseのコントローラ実行時にストロングパラメータを設定
   before_action :configure_permitted_parameters, if: :devise_controller?
+
+  # ユーザがログインしている場合、セッションのカート情報をDBのカートにマージする
+  before_action :prepare_cart, if: :user_signed_in?
 
   # ログイン後の遷移先を設定
   def after_sign_in_path_for(resource)
@@ -17,9 +21,6 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  # ユーザがログインしている場合、セッションのカート情報をDBのカートにマージする
-  before_action :prepare_cart, if: :user_signed_in?
-
   protected
 
   # サインアップ時に name と admin_flg を許可
@@ -30,7 +31,6 @@ class ApplicationController < ActionController::Base
   private
 
   def store_recent_product
-
     if params[:controller] == 'products' && params[:action] == 'show'
       product_id = params[:id].to_i  # パラメータから商品IDを取得（文字列→整数に変換）
       session[:recent_product_ids] ||= []  # セッションに recent_product_ids がなければ空配列で初期化
@@ -39,9 +39,10 @@ class ApplicationController < ActionController::Base
       session[:recent_product_ids] = session[:recent_product_ids].take(5)  # 配列の先頭5件だけを残す（＝最大5件まで表示）
     end
   end
+
   # セッションのカート情報をユーザごとのDBカートにマージするメソッド
   def prepare_cart
-     # セッションにカートがマージ済みであるか、または管理者ユーザの場合は何もしない
+    # セッションにカートがマージ済みであるか、または管理者ユーザの場合は何もしない
     return if session[:cart_merged] || current_user.admin_flg?
     # find_or_create_byは、指定した条件でレコードを検索し、存在しなければDBに新規作成するメソッド
     cart = Cart.find_or_create_by(user_id: current_user.id)
